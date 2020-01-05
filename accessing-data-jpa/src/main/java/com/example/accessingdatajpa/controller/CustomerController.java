@@ -26,6 +26,11 @@ public class CustomerController {
     @Autowired
     CustomerRepository repository;
 
+    /**
+     * test sayHello
+     * @param who
+     * @return
+     */
     @RequestMapping(value = "/sayHello")
     public String sayHello(@RequestParam(required = false, name = "who") String who) {
         if (StrUtil.isBlank(who)) {
@@ -34,10 +39,15 @@ public class CustomerController {
         return StrUtil.format("Hello, {}!", who);
     }
 
+    /**
+     * 插入数据
+     * @param firstName
+     * @param lastName
+     * @return
+     */
     @RequestMapping(value = "/insert")
     public boolean insert(String firstName, String lastName){
         try {
-
             if (!StrUtil.isBlank(firstName) || !StrUtil.isBlank(lastName)) {
                 repository.save(new Customer(firstName, lastName));
             } else {
@@ -55,6 +65,10 @@ public class CustomerController {
         }
     }
 
+    /**
+     * 查询所有 Customer
+     * @return
+     */
     @RequestMapping(value = "findAll")
     public List<Customer> findAll(){
         ArrayList<Customer> customers = new ArrayList<>();
@@ -67,6 +81,11 @@ public class CustomerController {
         return customers;
     }
 
+    /**
+     * 根据 lastName 查询 Customer
+     * @param lastName
+     * @return
+     */
     @RequestMapping(value = "/findByLastName")
     public List<Customer> findByLastName(String lastName){
         if (StrUtil.isBlank(lastName)){
@@ -81,6 +100,12 @@ public class CustomerController {
         return customers;
     }
 
+    /**
+     * 根据 lastName 过滤 Customer，并修改其 firstName
+     * @param lastName
+     * @param firstName
+     * @return
+     */
     @RequestMapping(value = "update")
     public String update(String lastName,String firstName){
         if (!StrUtil.isBlank(lastName) && !StrUtil.isBlank(firstName)) {
@@ -99,6 +124,11 @@ public class CustomerController {
         }
     }
 
+    /**
+     * 根据 lastName 过滤并删除
+     * @param lastName
+     * @return
+     */
     @RequestMapping(value = "delete")
     public String delete(String lastName){
         if (!StrUtil.isBlank(lastName)) {
