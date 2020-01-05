@@ -2,10 +2,7 @@ package com.example.accessingdatajpa.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * <p>FileName: Customer</p>
@@ -21,8 +18,9 @@ import javax.persistence.Table;
 public class Customer {
 
     @Id
-    @GeneratedValue(generator = "paymentableGenerator")
-    @GenericGenerator(name = "paymentableGenerator", strategy = "guid")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+//    @GeneratedValue(generator = "paymentableGenerator")
+//    @GenericGenerator(name = "paymentableGenerator", strategy = "guid")
     private Long id;
     private String firstName;
     private String lastName;
