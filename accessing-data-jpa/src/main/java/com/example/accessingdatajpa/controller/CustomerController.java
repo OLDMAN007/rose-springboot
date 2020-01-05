@@ -1,9 +1,11 @@
 package com.example.accessingdatajpa.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.example.accessingdatajpa.entity.Customer;
 import com.example.accessingdatajpa.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -24,14 +26,27 @@ public class CustomerController {
     @Autowired
     CustomerRepository repository;
 
+    @RequestMapping(value = "/sayHello")
+    public String sayHello(@RequestParam(required = false, name = "who") String who) {
+        if (StrUtil.isBlank(who)) {
+            who = "World";
+        }
+        return StrUtil.format("Hello, {}!", who);
+    }
+
     @RequestMapping(value = "/insert")
-    public boolean insert(){
+    public boolean insert(String firstName, String lastName){
         try {
-            repository.save(new Customer("Jason","Statham"));
-            repository.save(new Customer("Audrey","Hepburn"));
-            repository.save(new Customer("John","Rambo"));
-            repository.save(new Customer("Sylvester","Stallone"));
-            repository.save(new Customer("Tom","Cruise"));
+
+            if (!StrUtil.isBlank(firstName) || !StrUtil.isBlank(lastName)) {
+                repository.save(new Customer(firstName, lastName));
+            } else {
+                repository.save(new Customer("Jason","Statham"));
+                repository.save(new Customer("Audrey","Hepburn"));
+                repository.save(new Customer("John","Rambo"));
+                repository.save(new Customer("Sylvester","Stallone"));
+                repository.save(new Customer("Tom","Cruise"));
+            }
 
             return true;
         } catch (Exception e) {
@@ -53,12 +68,54 @@ public class CustomerController {
     }
 
     @RequestMapping(value = "/findByLastName")
-    public List<Customer> findByLastName(){
-        String lastName = "Stallone";
+    public List<Customer> findByLastName(String lastName){
+        if (StrUtil.isBlank(lastName)){
+            lastName = "Stallone";
+        }
+
         ArrayList<Customer> customers = new ArrayList<>();
         repository.findByLastName(lastName).forEach(stallone -> {
             customers.add(stallone);
         });
+
         return customers;
+    }
+
+    @RequestMapping(value = "update")
+    public String update(String lastName,String firstName){
+        if (!StrUtil.isBlank(lastName) && !StrUtil.isBlank(firstName)) {
+            findByLastName(lastName).forEach(byLastName ->{
+                byLastName.setFirstName(firstName);
+                repository.save(byLastName);
+            });
+//            repository.findByLastName(lastName).forEach(byLastName ->{
+//                byLastName.setFirstName(firstName);
+//                repository.save(byLastName);
+//            });
+            return "Success!";
+        } else {
+            ;
+            return "Please enter lastName and firstName!";
+        }
+    }
+
+    @RequestMapping(value = "delete")
+    public String delete(String lastName){
+        if (!StrUtil.isBlank(lastName)) {
+            List<Customer> byLastName = findByLastName(lastName);
+            if (byLastName.isEmpty()){
+                return "No customer's lastName is " + lastName ;
+            } else {
+                for(Customer customer : byLastName){
+                    repository.delete(customer);
+                }
+            }
+//            findByLastName(lastName).forEach(byLastName ->{
+//                repository.delete(byLastName);
+//            });
+            return "Success!";
+        } else {
+            return "Please enter lastName!";
+        }
     }
 }
