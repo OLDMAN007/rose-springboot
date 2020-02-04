@@ -23,8 +23,12 @@ import java.util.List;
 @RestController
 public class CustomerController {
 
-    @Autowired
+    final
     CustomerRepository repository;
+
+    public CustomerController(CustomerRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * test sayHello
@@ -119,7 +123,6 @@ public class CustomerController {
 //            });
             return "Success!";
         } else {
-            ;
             return "Please enter lastName and firstName!";
         }
     }
